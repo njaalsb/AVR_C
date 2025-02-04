@@ -20,6 +20,7 @@ void TCA0_init(void){
 }
 // Vet ikke om denne funksjonen, men det inni while-løkka virker vertfall
 void timeout(){
+    TCA0_init();
     uint16_t prevmillis = TCA0.SINGLE.CNT;
     //error = false;
     //uint16_t i = 0;
