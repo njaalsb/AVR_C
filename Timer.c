@@ -1,7 +1,7 @@
 /* 
  * File:   newmain.c
  * Author: bruhe
- *
+ * !!! DENNE KODEN VIRKER IKKE !!!
  * Created on January 31, 2025, 08:55 PM
  */
 
