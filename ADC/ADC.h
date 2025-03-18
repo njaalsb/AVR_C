@@ -5,8 +5,8 @@
  * Created on March 18, 2025, 10:40 AM
  */
 
- #ifndef CONFIG_H
- #define	CONFIG_H
+ #ifndef ADC_H
+ #define	ADC_H
  
  #ifdef	__cplusplus
  extern "C" {
@@ -29,4 +29,4 @@
  }
  #endif
 
- #endif	/* CONFIG_H */
+ #endif	/* ADC_H */
