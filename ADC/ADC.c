@@ -27,12 +27,8 @@
  void ADC0_init(void);
  uint16_t ADC0_read(void);
  
- void DAC0_init(void);
- void DAC0_set_val(uint16_t val);
- 
  int main() {
      ADC0_init();
-     DAC0_init();
      while(1){
          // Channel 7
          ADC0.MUXPOS = ADC_MUXPOS_AIN7_gc;
@@ -41,8 +37,6 @@
          // Channel 5
          ADC0.MUXPOS = ADC_MUXPOS_AIN5_gc;
          adcVal += ADC0_read();
-         
-         DAC0_set_val(adcVal);
      }
      return (EXIT_SUCCESS);
  }
@@ -74,26 +68,5 @@
      
      ADC0.INTFLAGS = ADC_RESRDY_bm;
      return ADC0.RES;
- }
- 
- 
- void DAC0_init(void)
- {
-         /*PIN D6*/
-     /* Disable digital input buffer */
-     PORTD.PIN6CTRL &= ~PORT_ISC_gm;
-     PORTD.PIN6CTRL |= PORT_ISC_INPUT_DISABLE_gc;
-     /* Disable pull-up resistor */
-     PORTD.PIN6CTRL &= ~PORT_PULLUPEN_bm;
-     VREF.DAC0REF |= VREF_REFSEL_VDD_gc;
-     /* Enable DAC, Output Buffer */
-     DAC0.CTRLA = DAC_ENABLE_bm | DAC_OUTEN_bm;
- }
- 
- void DAC0_set_val(uint16_t val){
-     /* Store the two LSbs in DAC0.DATAL */
-     DAC0.DATAL = (val & (0x03)) << 6;
-     /* Store the eight MSbs in DAC0.DATAH */
-     DAC0.DATAH = val >> 2;
  }
  

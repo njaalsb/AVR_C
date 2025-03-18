@@ -12,6 +12,13 @@
  * Kilder: 
  * - Getting Started with Analog-to-Digital Converter (ADC). Microchip 10/2/2025
  * - ERT 23. Carl Richard Steen Fosse, NTNU, 10/2/2025
+ * 
+ * Beskrivelse:
+ * Denne koden leser to signaler ved hjelp av ADC på PD7 og PD5, signalene legges sammen og skrives deretter 
+ * ut ved hjelp av DAC på pinne PD6. ADC'en bruker to forskjellige kanaler her, kanal 5 og 7, dette samsvarer
+ * med pinne-nummerene. Dette er helt tilfeldig og skal ikke ha noe å si for funksjonaliteten, AVR'en har 20+ 
+ * ADC-kanaler. 
+ * 
  */
 
 #include <stdio.h>
