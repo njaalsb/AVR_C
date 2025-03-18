@@ -14,31 +14,20 @@
  * - ERT 23. Carl Richard Steen Fosse, NTNU, 10/2/2025
  */
 
- #include <stdio.h>
- #include <stdlib.h>
- #include <avr/io.h>
- #include <string.h>
- 
- #define F_CPU 4000000UL
- 
- #include <util/delay.h>
- 
- uint16_t adcVal;
- void ADC0_init(void);
- uint16_t ADC0_read(void);
+
+ #include "ADC.h"
+
  
  int main() {
+    
      ADC0_init();
+
      while(1){
-         // Channel 7
-         ADC0.MUXPOS = ADC_MUXPOS_AIN7_gc;
+
          adcVal = ADC0_read();
-         
-         // Channel 5
-         ADC0.MUXPOS = ADC_MUXPOS_AIN5_gc;
-         adcVal += ADC0_read();
-     }
-     return (EXIT_SUCCESS);
+
+        }
+    return (EXIT_SUCCESS);
  }
  
  void ADC0_init(void)
