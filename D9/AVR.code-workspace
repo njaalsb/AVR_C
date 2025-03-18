@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"name": "AVR_C",
+			"path": ".."
+		}
+	],
+	"settings": {}
+}
