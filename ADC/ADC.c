@@ -5,8 +5,6 @@
  * Created on February 10, 2025, 3:11 PM
  * 
  * PINOUT:
- * PD6 = DAC
- * PD7 = Signal 1 inn
  * PD5 = Signal 2 inn
  * 
  * Kilder: 
@@ -19,7 +17,7 @@
 
  
  int main() {
-    
+
      ADC0_init();
 
      while(1){
