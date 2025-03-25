@@ -16,8 +16,7 @@
  * Beskrivelse:
  * Denne koden leser to signaler ved hjelp av ADC på PD7 og PD5, signalene legges sammen og skrives deretter 
  * ut ved hjelp av DAC på pinne PD6. ADC'en bruker to forskjellige kanaler her, kanal 5 og 7, dette samsvarer
- * med pinne-nummerene. Dette er helt tilfeldig og skal ikke ha noe å si for funksjonaliteten, AVR'en har 20+ 
- * ADC-kanaler. ADC-en kan ikke lese fra to kanaler samtidig og bruker derfor ADC_MUXPOS_AINX_gc til å bytte 
+ * med pinne-nummerene. ADC-en kan ikke lese fra to kanaler samtidig og bruker derfor ADC_MUXPOS_AINX_gc til å bytte 
  * mellom de to forskjellige kanalene.
  * 
  */
