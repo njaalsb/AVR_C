@@ -30,7 +30,7 @@ void ADC0_init(void)
     
     /* Select ADC channel */
     ADC0.MUXPOS = ADC_MUXPOS_AIN5_gc;
-    VREF.ADC0REF |= VREF_REFSEL_VDD_gc;
+    VREF.ADC0REF |= VREF_REFSEL_VDD_gc; // Bruk heller lavere ref ved lavere spenninger: VREF_REFSEL_2V048_gc
     
     ADC0.INTCTRL |= ADC_RESRDY_bm; // Aktiver interrupt
     ADC0.CTRLA |= ADC_FREERUN_bm; // Sett freerun-modus
