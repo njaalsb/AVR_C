@@ -14,6 +14,7 @@
  * PB0 -> R_x (USART3)
  * PC1 -> T_x (USART1)
  * 
+ * Sist oppdatert: 18/10/25
  */
 
 

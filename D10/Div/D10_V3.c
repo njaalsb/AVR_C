@@ -2,8 +2,14 @@
  * main.c
  * 
  * Designprosjekt 10
+ * 
+ * Info: Dette prosjektet demonstrerer KissFFT-biblioteket (et C-bibliotek for beregning av FFT) på AVR128DB48. Det er basert på et eksempel fra Microchip. 
+ * Testen gjennomføres ved at det tas FFT av en sinus lagret i minnet. Effekten av hver frekvenskomponent i FFT blir så beregnet før dataen sendes over UART.
+ * Det er deretter mulig å visualisere dataen i Data Visualizer i MPLAB X.rosjektet er konfigurert til å bruke fixed-point beregninger på 16 bit. 
+ * Se README og GitHub (https://github.com/microchip-pic-avr-examples/avr64ea48-digital-filters-studio/tree/master/fft) 
+ * for detaljert info om demonstrasjonen. 
  *
- * Sist oppdatert: 7/5/2025
+ * Sist oppdatert: 30/4/2025
  */ 
 
 #include <xc.h>
@@ -58,13 +64,13 @@ ISR(ADC0_RESRDY_vect){
 }
 
 void FFT(kiss_fft_scalar cpx[],
-        kiss_fftr_cfg config,
-        kiss_fft_cpx cpx_out[],
-        volatile uint16_t *cnt,
-        volatile int16_t *watch_real,
-        volatile int16_t *watch_imag,
-        volatile uint32_t *pwr)
-{
+     kiss_fftr_cfg config,
+     kiss_fft_cpx cpx_out[],
+     volatile uint16_t *cnt,
+     volatile int16_t *watch_real,
+     volatile int16_t *watch_imag,
+     volatile uint32_t *pwr){
+    
     ADC0.INTFLAGS = ADC_RESRDY_bm;
     
     //PORTD.OUTSET = PIN4_bm;
@@ -90,9 +96,7 @@ void FFT(kiss_fft_scalar cpx[],
         counter--;
     }
     SSD1306_UpdateScreen (SSD1306_ADDR);
-    memset(cpx_out, 0, sizeof(cpx_out)/sizeof(cpx_out[0]));
-    active_buffer = !active_buffer;
-    k = 0;
+    memset(cpx, 0, sizeof(cpx)/sizeof(cpx[0]));
 }
 
 int main(void)
@@ -119,16 +123,24 @@ int main(void)
     volatile uint16_t cnt=0;
 
     while(1) {
-        //PORTD.OUTSET = PIN4_bm;
+        PORTD.OUTSET = PIN4_bm;
         if(!active_buffer && k >= NFFT){
-            PORTD.OUTSET = PIN4_bm;
+            
+            active_buffer = !active_buffer;
+            
             FFT(cpx_in, cfg, cpx_out, &cnt, &watch_real, &watch_imag, &pwr);
+            
+            k = 0;
         } 
-        if(active_buffer && k >= NFFT){  
-            FFT(cpx_in_2, cfg, cpx_out, &cnt, &watch_real, &watch_imag, &pwr);
-            PORTD.OUTCLR = PIN4_bm;
-        }
         
+        if(active_buffer && k >= NFFT){  
+            
+            active_buffer = !active_buffer;
+            
+            FFT(cpx_in_2, cfg, cpx_out, &cnt, &watch_real, &watch_imag, &pwr);
+            
+            k = 0;
+        }
     }
-    kiss_fft_cleanup();                         // Tidy up after you.
+    kiss_fft_cleanup(); // Oppryddning, funksjon fra biblioteket
 }
