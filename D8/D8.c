@@ -1,9 +1,23 @@
 /* 
- * File:   newmain.c
+ * File:   main.c
  * Author: bruhe
  *
  * Created on January 20, 2025, 12:05 PM
+ * 
+ * Info:
+ * Denne koden er en testbenk for UART kommunikasjon, USART1 sender tilfeldige bitsekvenser
+ * til USART3. USART0 skal skrive resultatene fra kommunikasjonen til terminalen, men litt
+ * usikker på om dette er nødvendig. Mulig USART3 kan brukes i steden. 
+ * 
+ * Pinout: 
+ * 
+ * PB0 -> R_x (USART3)
+ * PC1 -> T_x (USART1)
+ * 
  */
+
+
+ // Makroer for klokkefrekvens og baud rate 
 #define F_CPU 4000000UL
 #define TIMEOUT_MS 1000 // Timeout i et sekund 
 #define USART3_BAUD_RATE(BAUD_RATE) ((float)(F_CPU * 64 / (16 *(float)BAUD_RATE)) + 0.5)
@@ -11,16 +25,25 @@
 #define USART0_BAUD_RATE(BAUD_RATE) ((float)(F_CPU * 64 / (16 *(float)BAUD_RATE)) + 0.5)
 #define COMMON_BAUD_RATE 9600  
 
-
+#include <stdio.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdlib.h>
 #include <time.h>
 #include <util/delay.h>
 #include <string.h>
-#include <stdio.h>
 
-// Kilde: https://stackoverflow.com/questions/111928/is-there-a-printf-converter-to-print-in-binary-format
+
+/*
+ * Denne makroen brukes for å gjøre om en byte til et bitmønster.
+ *
+ * F.eks: 0xAF => '0b10101111' 
+ * 
+ * Dette brukes for å sammenligne bytes bitvis.
+ * 
+ * Kilde: https://stackoverflow.com/questions/111928/is-there-a-printf-converter-to-print-in-binary-format
+ */
+
 #define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
 #define BYTE_TO_BINARY(byte)  \
     ((byte) & 0x80 ? '1' : '0'), \
@@ -32,9 +55,7 @@
     ((byte) & 0x02 ? '1' : '0'), \
     ((byte) & 0x01 ? '1' : '0')
 
-/*
- * 
- */
+
 // Prototyper USART1
 void USART1_init(void);
 void USART1_sendChar(char c);
@@ -55,6 +76,7 @@ void USART3_sendString(char *str);
 uint8_t USART3_read();
 static int USART3_printChar(char c, FILE *stream);
 
+// Prototype for randomizer funksjon
 char randomizer();
 
 void USART0_sendChar(char c) {
@@ -147,6 +169,7 @@ static int USART1_printChar(char c, FILE *stream){
     return 0;
 }
 
+// Randomizer funksjon
 char randomizer(){
     int i = rand() % 20;
     char c = i + '0';
@@ -184,10 +207,13 @@ void purge_buffer(void){
 }
 
 void BER_calculator(uint8_t tx, uint8_t rx) {
+    // Bitvis XOR på motatt og sendt bitsekvens (7 bit lengde ish, siden ASCII brukes)
     uint8_t forskjell = tx ^ rx;
     static uint16_t feil_teller;
     static uint16_t iterasjoner;
+
     printf("%d\r\n", iterasjoner++);
+
     if (forskjell == 0) {
         printf("Ingen bitfeil: 0b"BYTE_TO_BINARY_PATTERN"\n\r", BYTE_TO_BINARY(tx));
     } 
@@ -197,6 +223,7 @@ void BER_calculator(uint8_t tx, uint8_t rx) {
         printf("Mottatt  : 0b"BYTE_TO_BINARY_PATTERN"\n\r", BYTE_TO_BINARY(rx));
         printf("Forskjell: 0b"BYTE_TO_BINARY_PATTERN"\n\r", BYTE_TO_BINARY(forskjell));
 
+        // Itererer gjennom bitsekvensen og inkrementerer feil_teller hver gang en feil oppdages
         for (int i = 0; i < 8; i++) {
             if (forskjell & (1 << i)) { 
                 printf("Bit %d er feil!\n\r", i);
@@ -206,6 +233,9 @@ void BER_calculator(uint8_t tx, uint8_t rx) {
     }
     if(iterasjoner >= 1000 & feil_teller >= 0){
         double rate;
+
+        // Etter 1000 iterasjoner beregnes feilraten
+        // Antall iterasjoner kan økes for mer nøyaktig beregning 
         rate = 100.0 * ((float)feil_teller/(iterasjoner*8));
         printf("BER = %f\r\n", rate);
         printf("Antall iterajoner %d\r\n", iterasjoner);
@@ -218,9 +248,11 @@ void BER_calculator(uint8_t tx, uint8_t rx) {
 
 
 int main(void) {
+    // Initialiserer
     USART3_init();
     USART0_init();
     USART1_init();
+
     PORTB.DIRSET = PIN2_bm; //led
     PORTB.OUT |= PIN2_bm;
     char* sendstring = "Starter...\r\n";
@@ -229,10 +261,12 @@ int main(void) {
     char tx_char;
     char rx_char;
     while (1) {
+        // Tømmer mottaks bufferen til USART1
         purge_buffer();
         
         _delay_ms(10);
         
+        // Generer random char 
         tx_char = randomizer();
        
         USART3_sendChar(tx_char);
@@ -241,10 +275,12 @@ int main(void) {
         
         rx_char = USART1_read();
         
+        // Linjeskift
         printf("%s\r\n", ""); 
         
         BER_calculator(tx_char, rx_char);
         
+        // Toggler LED
         if(rx_char == tx_char){
             PORTB.OUT ^= PIN2_bm;
         } 
