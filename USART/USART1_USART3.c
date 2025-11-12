@@ -2,6 +2,8 @@
  * File:   newmain.c
  * Author: bruhe
  *
+ * Denne koden er skrevet spesifikt for å sende en karakter fra USART3 til USART1
+ *
  * Created on January 20, 2025, 12:05 PM
  */
 #define F_CPU 4000000UL
