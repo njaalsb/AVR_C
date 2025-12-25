@@ -1,4 +1,8 @@
 # AVR_C
+
+![C](https://img.shields.io/badge/c-%2300599C.svg?style=for-the-badge&logo=c&logoColor=white)
+![Microchip](https://img.shields.io/badge/Microchip-EE3233?style=for-the-badge&logo=microchip&logoColor=white)
+
 ## PINOUT:
 ![image](https://github.com/user-attachments/assets/5432e30c-122d-43a8-b5eb-ff33b97a3f2c)
 
